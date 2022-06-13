@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+{% block title %}Нахождение корней квадратного уравнения{% endblock %}
+{% block header %}Нахождение корней квадратного уравнения{% endblock %}
+
+{% block content %}
+    <div class="container-task1 text-center">
+        {% load static %}
+        <img src="{% static 'rqe.png' %}"/>
+
+        <!-- Задача1 -->
+        <form method="post" action={% url 'taskrqe' %} enctype="multipart/form-data">
+            <!-- Форма -->
+            {% for field in form %}
+                {% csrf_token %}
+                <div class="form-group row" aria-required={% if field.field.required %}"true"{% else %}"false"{% endif %}>
+                    <label for="{{ field.id_for_label }}" class="col-md-4 col-form-label text-md-right">{{ field.label }}{% if field.field.required %}<span class="required">*</span>{% endif %}</label>
+                    <div class="col-md-6">
+                        {{ field }}
+                        {{ field.errors }}
+                        {% if field.help_text %}
+                        <small id="{{ field.id_for_label }}-help" class="form-text text-muted">{{ field.help_text|safe }}</small>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endfor %}
+            
+            <!-- Кнопки -->
+            <div class="col">              
+                <button type="submit" class="btn btn-primary">
+                    Посчитать корни
+                </button>
+            </div>
+        </form>
+
+        <!-- Результаты -->
+        <div class="container-result m-1">
+            {% if Result %}
+                {% if Root1 != None %}
+                    <p>Корень 1 = {{ Root1 }}</p>
+                {% endif %}
+
+                {% if Root2 != None %}
+                    <p>Корень 2 = {{ Root2 }}</p> 
+                {% endif %}
+
+                {% if Noroots %}
+                    <p>Нет корней</p>
+                {% endif %}
+ 
+            {% else %}
+                <p>Введите правильные значения коэффициентов</p>
+            {% endif %}
+        </div>
+
+        <!-- Условия -->
+        <div class="container-conditions m-3">
+            <p class="font-weight-bold">Задание 1</p>
+            <p class="text-justify">Напишите сервис, который будет находить корни квадратного уравнения a * x^2 + b * x + c = 0.
+            Самостоятельно определите наиболее оптимальную структуру возвращаемых данных.
+            В качестве входных данных в сервис передаются значения a, b, c.</p>
+            <p class="text-justify">💡 **Напоминание.** Корни квадратного уравнения рассчитываются следующим образом:</p>
+            <p class="text-left">- если b^2 -4 * a * c < 0, то уравнение не имеет решений;</p>
+            <p class="text-left">- если b^2 -4 * a * c = 0, то уравнение имеет одно решение x = - b / (2 * a);</p>
+            <p class="text-left">- если b^2 -4 * a * c > 0, то уравнение имеет два решения: x = (-b +- sqrt(b^2-4 * a * c)) / (2 * a).</p>
+        </div>
+
+    </div>
+
+{% endblock %}

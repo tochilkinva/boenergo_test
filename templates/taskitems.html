@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+{% block title %}Определите цвет предметов{% endblock %}
+{% block header %}Определите цвет предметов{% endblock %}
+
+{% block content %}
+    <div class="container-task1 text-center">
+        <!-- Предметы -->
+        <div class="container-result m-3 text-center">
+            {% if Makeitems == 'YES' %}
+                <a class="btn btn-primary" href="{% url 'additems' count=10 %}" role="button">
+                    Создать 10 предметов
+                </a>
+                <a class="btn btn-primary" href="{% url 'additems' count=100 %}" role="button">
+                    Создать 100 предметов
+                </a>
+            {% endif %}
+            <div class="row m-3">
+                <!-- Определение цвета предмета -->
+                {% for Item in Items %}
+                    <!-- Не угадан - бесцветный-->
+                    {% if Item.status == False %}
+                        <div class="card col">
+                            {{ Item.number }}
+                        </div>
+                    <!-- Угадан - цветной-->
+                    {% else %}
+                        {% if Item.color == 'BLUE' %}
+                        <div class="card bg-primary col">
+                            {{ Item.number }}
+                        </div>
+                        {% endif %}
+                        
+                        {% if Item.color == 'GREEN' %}
+                            <div class="card bg-success col">
+                                {{ Item.number }}
+                            </div>
+                        {% endif %}
+
+                        {% if Item.color == 'RED' %}
+                            <div class="card bg-danger col">
+                                {{ Item.number }}
+                            </div>
+                        {% endif %}
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+        
+
+        <!-- Задача2 -->
+        <form method="post" action={% url 'taskitems' %} enctype="multipart/form-data">
+            <!-- Форма -->
+            {% for field in form %}
+                {% csrf_token %}
+                <div class="form-group row" aria-required={% if field.field.required %}"true"{% else %}"false"{% endif %}>
+                    <label for="{{ field.id_for_label }}" class="col-md-4 col-form-label text-md-right">{{ field.label }}{% if field.field.required %}<span class="required">*</span>{% endif %}</label>
+                    <div class="col-md-6">
+                        {{ field }}
+                        {{ field.errors }}
+                        {% if field.help_text %}
+                        <small id="{{ field.id_for_label }}-help" class="form-text text-muted">{{ field.help_text|safe }}</small>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endfor %}
+            
+            <!-- Кнопки -->
+            <div class="col">              
+                <button type="submit" class="btn btn-primary">
+                    Отгадать цвет
+                </button>
+            </div>
+        </form>
+
+        <!-- Результаты -->
+        <div class="container-result m-3">
+            {% if Result == 'UNDEFINED' %}
+                <p>Выберите цвет предмета</p>
+            {% endif %}
+
+            {% if Result == 'NO' %}
+                <p>Цвет не разгадан</p>
+            {% endif %}
+
+            {% if Result == 'YES' %}
+                <p>Цвет угадан</p>
+            {% endif %}
+        </div>
+
+        <!-- Условия -->
+        <div class="container-conditions m-3">
+            <p class="font-weight-bold">Задание 2</p>
+            <p class="text-justify">
+                Есть группа из 100 предметов. Предметы могут быть синего, зелёного и красного цвета. 
+                Известно, что предметов синего цвета сильно больше, чем предметов зелёного цвета, 
+                а предметов зелёного цвета немного больше, чем предметов красного цвета. 
+                Напишите сервис, который будет принимать номер предмета и пытаться угадать его цвет. 
+                Логику работы сервиса определите самостоятельно.
+            </p>
+        </div>
+    </div>
+{% endblock %}
